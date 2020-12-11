@@ -1,5 +1,6 @@
 package com.alsharany.mytodoapp
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.provider.Settings.System.DATE_FORMAT
@@ -8,6 +9,7 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -33,14 +35,16 @@ open class InputDialogFragment : DialogFragment(), DatePickerFragment.DateCallba
             .setView(v)
             .setTitle("create new task")
             .setPositiveButton("Add") { dialog, _ ->
-                val s = Task(
+                val t = Task(
                     UUID.randomUUID(),
                     taskTitleEditText.text.toString(),
                     taskDescriptionEditeText.text.toString(),
-                    task.createDate
+                    task.createDate,
+                    task.endDate,
+
                 )
                 targetFragment?.let {
-                    (it as InputCallbacks).onTaskAdd(s)
+                    (it as InputCallbacks).onTaskAdd(t)
                 }
 
             }
@@ -50,9 +54,12 @@ open class InputDialogFragment : DialogFragment(), DatePickerFragment.DateCallba
             }.create()
     }
 
+    @SuppressLint("SimpleDateFormat")
     fun updateUi() {
-        taskCreateDateButton.text = SimpleDateFormat(DATE_FORMAT).format(task.createDate)
-        taskEndDateButton.text = SimpleDateFormat(DATE_FORMAT).format(task.endDate)
+        taskCreateDateButton.text= DateFormat.getDateInstance(DateFormat.LONG).format(this.task.createDate)
+        taskEndDateButton.text= DateFormat.getDateInstance(DateFormat.LONG).format(this.task.endDate)
+        //taskCreateDateButton.text = SimpleDateFormat(DATE_FORMAT).format(task.createDate)
+       // taskEndDateButton.text = SimpleDateFormat(DATE_FORMAT).format(task.endDate)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

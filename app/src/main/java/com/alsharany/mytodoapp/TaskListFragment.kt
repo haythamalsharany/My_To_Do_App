@@ -27,8 +27,8 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
     }
     private var adapter: TaskAdapter? = null
     private var tabIndex: Int = 0
-    private lateinit var noDataTextView: TextView
-    private lateinit var addCrimeButton: Button
+   // private lateinit var noDataTextView: TextView
+   //0 private lateinit var addCrimeButton: Button
     lateinit var taskList: List<Task>
     // private var listener: Listener? = null
 
@@ -62,7 +62,7 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
                 toDoTaskLiveDataList?.observe(
 
                     viewLifecycleOwner,
-                    Observer { tasks ->
+                    { tasks ->
                         taskList = tasks
 
                     }
@@ -71,22 +71,24 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
                 inprogressTaskLiveDataList?.observe(
 
                     viewLifecycleOwner,
-                    Observer { tasks ->
+                    { tasks ->
 
                         taskList = tasks
+                        updateUI(taskList)
                     }
                 )
             else
                 doneTaskLiveDataList?.observe(
 
                     viewLifecycleOwner,
-                    Observer { tasks ->
+                    { tasks ->
                         taskList = tasks
-
+                        updateUI(taskList)
                     }
                 )
+
         }
-        updateUI(taskList)
+
     }
 
     private inner class TaskHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -133,12 +135,12 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
                 upgradeListStateButton.visibility = View.GONE
             }
             taskTitleTextView.text = task.title
-            val calander = java.util.Calendar.getInstance()
-            val calanderNow = java.util.Calendar.getInstance()
+            val calander = Calendar.getInstance()
+            val calanderNow = Calendar.getInstance()
             calander.time = task.endDate
             calanderNow.time = Date()
 
-            if (calander.get(java.util.Calendar.DAY_OF_WEEK) - 3 == calanderNow.get(java.util.Calendar.DAY_OF_WEEK))
+            if (calander.get(Calendar.DAY_OF_WEEK) - 3 == calanderNow.get(Calendar.DAY_OF_WEEK))
                 itemView.setBackgroundColor(Color.RED)
         }
 
@@ -159,7 +161,7 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
         }
 
         override fun getItemCount(): Int {
-            if (tasks.isNotEmpty()) {
+            /*if (tasks.isNotEmpty()) {
                 noDataTextView.visibility = View.GONE
                 addCrimeButton.visibility = View.GONE
             } else {
@@ -167,7 +169,7 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
                 noDataTextView.visibility = View.VISIBLE
                 addCrimeButton.visibility = View.VISIBLE
             }
-
+*/
             return tasks.size
         }
 

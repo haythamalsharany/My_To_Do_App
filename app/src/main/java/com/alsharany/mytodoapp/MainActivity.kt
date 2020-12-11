@@ -3,8 +3,6 @@ package com.alsharany.mytodoapp
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
-import com.alsharany.restaurantapp.MyTab
-import com.alsharany.restaurantapp.TaskState
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -16,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         tabLayout = findViewById(R.id.main_tab_layout)
-        viewPager = findViewById<ViewPager2>(R.id.main_view_Pager)
+        viewPager = findViewById(R.id.main_view_Pager)
         adabter = PagerAdabter(this)
         adabter.addTab(MyTab(TaskState(1, "To Do"), TaskListFragment.newInstance(0)))
         adabter.addTab(MyTab(TaskState(2, "in progress"), TaskListFragment.newInstance(1)))

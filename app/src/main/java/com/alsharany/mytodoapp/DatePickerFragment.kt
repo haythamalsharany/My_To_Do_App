@@ -11,13 +11,14 @@ import androidx.fragment.app.DialogFragment
 import java.util.*
 
 private const val ARG_DATE = "date"
+private const val ARG_STRING = "string"
 
 class DatePickerFragment : DialogFragment() {
     lateinit var str: String
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        str = arguments?.getString(ARG_DATE)!!
+        str = arguments?.getString(ARG_STRING)!!
         val dateListener =
             DatePickerDialog.OnDateSetListener { _: DatePicker, year: Int, month: Int, day: Int ->
                 val resultDate: Date = GregorianCalendar(year, month, day).time
@@ -55,7 +56,7 @@ class DatePickerFragment : DialogFragment() {
 
             val args = Bundle().apply {
                 putSerializable(ARG_DATE, date)
-                putString(ARG_DATE, s)
+                putString(ARG_STRING, s)
             }
             return DatePickerFragment().apply {
                 arguments = args

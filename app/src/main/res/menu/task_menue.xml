@@ -4,6 +4,6 @@
     <item
         android:id="@+id/add_task"
         android:icon="@android:drawable/ic_menu_add"
-        android:title="New Student"
+        android:title="New Task"
         app:showAsAction="ifRoom|withText"></item>
 </menu>

@@ -1,4 +1,4 @@
-package com.alsharany.studentapp.database
+package com.alsharany.mytodoapp.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.*

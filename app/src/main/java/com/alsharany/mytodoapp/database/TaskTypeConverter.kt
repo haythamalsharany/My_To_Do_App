@@ -1,4 +1,4 @@
-package com.alsharany.criminalintent.database
+package com.alsharany.mytodoapp.database
 
 import java.util.*
 

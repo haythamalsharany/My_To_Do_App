@@ -3,7 +3,6 @@ package com.alsharany.mytodoapp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.alsharany.restaurantapp.MyTab
 
 class PagerAdabter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
     val tabs = ArrayList<MyTab>()
