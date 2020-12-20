@@ -2,11 +2,11 @@ package com.alsharany.mytodoapp
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,11 +25,12 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
             ViewModelProvider.NewInstanceFactory()
         ).get(TaskViewModel::class.java)
     }
-    private var adapter: TaskAdapter? = null
+    private var adapter: TaskAdapter? = TaskAdapter(emptyList())
     private var tabIndex: Int = 0
-   // private lateinit var noDataTextView: TextView
-   //0 private lateinit var addCrimeButton: Button
-    lateinit var taskList: List<Task>
+
+    // private lateinit var noDataTextView: TextView
+    //0 private lateinit var addCrimeButton: Button
+    var taskList: List<Task> = emptyList()
     // private var listener: Listener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +39,8 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
         arguments.let {
             tabIndex = it!!.getInt(TAP_INDEX)
         }
+
+
     }
 
     override fun onCreateView(
@@ -65,6 +68,7 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
                     { tasks ->
                         taskList = tasks
 
+                        updateUI(taskList)
                     }
                 )
             else if (tabIndex == 1)
@@ -77,21 +81,25 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
                         updateUI(taskList)
                     }
                 )
-            else
+            else if (tabIndex == 2)
                 doneTaskLiveDataList?.observe(
 
                     viewLifecycleOwner,
                     { tasks ->
                         taskList = tasks
+
+
                         updateUI(taskList)
                     }
                 )
 
         }
 
+
     }
 
-    private inner class TaskHolder(view: View) : RecyclerView.ViewHolder(view) {
+    private inner class TaskHolder(view: View) : RecyclerView.ViewHolder(view),
+        View.OnClickListener {
         lateinit var task: Task
         val downListStateButton = itemView.findViewById(R.id.down_state_btn) as Button
         val upgradeListStateButton = itemView.findViewById(R.id.upgrade_state) as Button
@@ -100,15 +108,9 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
 
         init {
 
-            downListStateButton.setOnClickListener {
-                if (tabIndex == 1) {
-                    this.task.taskState = 0
+            downListStateButton.setOnClickListener(this)
 
-                } else if (tabIndex == 2) {
-                    this.task.taskState = 1
-                }
-                updateUI(taskList)
-            }
+
             upgradeListStateButton.setOnClickListener {
                 if (tabIndex == 0) {
                     this.task.taskState = 1
@@ -116,8 +118,11 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
                 } else if (tabIndex == 1) {
                     this.task.taskState = 2
                 }
+                taskViewModel.updateTaskState(this.task)
+                updateUI(taskList)
+
             }
-            updateUI(taskList)
+
         }
 
 
@@ -125,12 +130,16 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
             this.task = item
             if (tabIndex == 0) {
                 downListStateButton.visibility = View.GONE
+                upgradeListStateButton.visibility = View.VISIBLE
                 upgradeListStateButton.text = "inprogress"
             } else if (tabIndex == 1) {
 
                 upgradeListStateButton.text = "Done"
                 downListStateButton.text = "To Do"
+                downListStateButton.visibility = View.VISIBLE
+                upgradeListStateButton.visibility = View.VISIBLE
             } else {
+                downListStateButton.visibility = View.VISIBLE
                 downListStateButton.text = "inprogress"
                 upgradeListStateButton.visibility = View.GONE
             }
@@ -142,6 +151,21 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
 
             if (calander.get(Calendar.DAY_OF_WEEK) - 3 == calanderNow.get(Calendar.DAY_OF_WEEK))
                 itemView.setBackgroundColor(Color.RED)
+        }
+
+        override fun onClick(v: View?) {
+            // if (v == downListStateButton) {
+            if (tabIndex == 1) {
+                this.task.taskState = 0
+
+            } else if (tabIndex == 2) {
+                this.task.taskState = 1
+            }
+            taskViewModel.updateTaskState(this.task)
+            updateUI(taskList)
+            /*else if (v == upgradeListStateButton) {
+                   */
+
         }
 
 
@@ -223,7 +247,13 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
 
 
     override fun onTaskAdd(task: Task) {
-        taskViewModel.addTask(task)
+        try {
+            taskViewModel.addTask(task)
+        } catch (e: Exception) {
+
+            Log.d("notAdd", e.message)
+        }
+
 
     }
 }

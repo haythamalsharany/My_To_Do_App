@@ -16,20 +16,11 @@ class MainActivity : AppCompatActivity() {
         tabLayout = findViewById(R.id.main_tab_layout)
         viewPager = findViewById(R.id.main_view_Pager)
         adabter = PagerAdabter(this)
-        adabter.addTab(MyTab(TaskState(1, "To Do"), TaskListFragment.newInstance(0)))
-        adabter.addTab(MyTab(TaskState(2, "in progress"), TaskListFragment.newInstance(1)))
-        adabter.addTab(MyTab(TaskState(3, "Done"), TaskListFragment.newInstance(2)))
+        adabter.addTab(MyTab(TaskState(0, "To Do"), TaskListFragment.newInstance(0)))
+        adabter.addTab(MyTab(TaskState(1, "in progress"), TaskListFragment.newInstance(1)))
+        adabter.addTab(MyTab(TaskState(2, "Done"), TaskListFragment.newInstance(2)))
 
         viewPager.adapter = adabter
-
-
-        /* viewPager.registerOnPageChangeCallback(object :ViewPager2.OnPageChangeCallback(){
-             override fun onPageSelected(position: Int) {
-                 super.onPageSelected(position)
-                 Toast.makeText(this@MainActivity,"page ${position+1}", Toast.LENGTH_LONG).show()
-             }
-         })*/
-
 
         TabLayoutMediator(tabLayout, viewPager) { tap, postion ->
             when (postion) {

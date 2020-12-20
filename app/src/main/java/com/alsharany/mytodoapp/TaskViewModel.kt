@@ -31,5 +31,9 @@ class TaskViewModel : ViewModel() {
 
     }
 
+    fun updateTaskState(task: Task) {
+        taskRepo?.updateTask(task)
+    }
+
 
 }

@@ -35,11 +35,13 @@ class TaskRepository private constructor(context: Context) {
 
     fun addTask(task: Task) {
         executor.execute {
-            taskDao.addTask(task)
+
+        taskDao.addTask(task)
         }
     }
 
     fun deleteTask(task: Task) {
+
         executor.execute {
             taskDao.deleteTask(task)
         }
