@@ -1,5 +1,6 @@
 package com.alsharany.mytodoapp
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -17,8 +18,12 @@ var TAP_INDEX = "tab index"
 
 class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
 
+    interface ListTaskCallBacks {
+        fun onTaskSelected(taskId: UUID)
+    }
 
     private lateinit var taskRecyclerView: RecyclerView
+
     private val taskViewModel by lazy {
         ViewModelProvider(
             this,
@@ -27,12 +32,8 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
     }
     private var adapter: TaskAdapter? = TaskAdapter(emptyList())
     private var tabIndex: Int = 0
-
-    // private lateinit var noDataTextView: TextView
-    //0 private lateinit var addCrimeButton: Button
     var taskList: List<Task> = emptyList()
-    // private var listener: Listener? = null
-
+    private var listTaskCallBacks: ListTaskCallBacks? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -41,6 +42,11 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
         }
 
 
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        listTaskCallBacks = context as ListTaskCallBacks
     }
 
     override fun onCreateView(
@@ -107,18 +113,34 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
 
 
         init {
+            itemView.setOnClickListener(this)
 
-            downListStateButton.setOnClickListener(this)
+            downListStateButton.setOnClickListener {
+
+                if (tabIndex == 1) {
+                    this.task.taskState = 0
+                    taskViewModel.updateTaskState(this.task)
+                } else if (tabIndex == 2) {
+                    this.task.taskState = 1
+                    taskViewModel.updateTaskState(this.task)
+                } else
+                    taskViewModel.deleteTask(this.task)
+
+                updateUI(taskList)
+            }
 
 
             upgradeListStateButton.setOnClickListener {
                 if (tabIndex == 0) {
                     this.task.taskState = 1
+                    taskViewModel.updateTaskState(this.task)
 
                 } else if (tabIndex == 1) {
                     this.task.taskState = 2
-                }
-                taskViewModel.updateTaskState(this.task)
+                    taskViewModel.updateTaskState(this.task)
+                } else
+                    taskViewModel.deleteTask(this.task)
+
                 updateUI(taskList)
 
             }
@@ -129,9 +151,14 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
         fun bind(item: Task) {
             this.task = item
             if (tabIndex == 0) {
-                downListStateButton.visibility = View.GONE
+
+                downListStateButton.text = "Delete"
+                downListStateButton.run { setBackgroundColor(resources.getColor(R.color.coloreDelete)) }
+
+                downListStateButton.visibility = View.VISIBLE
                 upgradeListStateButton.visibility = View.VISIBLE
                 upgradeListStateButton.text = "inprogress"
+                //  button_parent.gravity=Gravity.END
             } else if (tabIndex == 1) {
 
                 upgradeListStateButton.text = "Done"
@@ -141,7 +168,9 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
             } else {
                 downListStateButton.visibility = View.VISIBLE
                 downListStateButton.text = "inprogress"
-                upgradeListStateButton.visibility = View.GONE
+                upgradeListStateButton.visibility = View.VISIBLE
+                upgradeListStateButton.text = "Delete"
+                upgradeListStateButton.run { setBackgroundColor(resources.getColor(R.color.coloreDelete)) }
             }
             taskTitleTextView.text = task.title
             val calander = Calendar.getInstance()
@@ -149,22 +178,13 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
             calander.time = task.endDate
             calanderNow.time = Date()
 
-            if (calander.get(Calendar.DAY_OF_WEEK) - 3 == calanderNow.get(Calendar.DAY_OF_WEEK))
+            if (calanderNow.get(Calendar.DAY_OF_WEEK) >= calander.get(Calendar.DAY_OF_WEEK) - 3)
                 itemView.setBackgroundColor(Color.RED)
         }
 
         override fun onClick(v: View?) {
-            // if (v == downListStateButton) {
-            if (tabIndex == 1) {
-                this.task.taskState = 0
 
-            } else if (tabIndex == 2) {
-                this.task.taskState = 1
-            }
-            taskViewModel.updateTaskState(this.task)
-            updateUI(taskList)
-            /*else if (v == upgradeListStateButton) {
-                   */
+            listTaskCallBacks?.onTaskSelected(this.task.id)
 
         }
 
@@ -219,6 +239,11 @@ class TaskListFragment : Fragment(), InputDialogFragment.InputCallbacks {
                 }
             }
 
+    }
+
+    override fun onStop() {
+        super.onStop()
+        listTaskCallBacks = null
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

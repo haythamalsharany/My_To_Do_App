@@ -5,14 +5,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), TaskListFragment.ListTaskCallBacks {
     lateinit var tabLayout: TabLayout
     lateinit var viewPager: ViewPager2
     lateinit var adabter: PagerAdabter
+
+    //  lateinit var toolbar: Toolbar
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        // toolbar=findViewById(R.id.toolbar)
         tabLayout = findViewById(R.id.main_tab_layout)
         viewPager = findViewById(R.id.main_view_Pager)
         adabter = PagerAdabter(this)
@@ -47,5 +51,13 @@ class MainActivity : AppCompatActivity() {
 
 
         }.attach()
+    }
+
+    override fun onTaskSelected(taskId: UUID) {
+        val fragment = TaskDetailsFragment.newInstance(taskId)
+
+        val fragmentManager = supportFragmentManager
+        val ft = fragmentManager.beginTransaction()
+        ft.replace(R.id.main_view_Pager, fragment).addToBackStack(null).commit()
     }
 }

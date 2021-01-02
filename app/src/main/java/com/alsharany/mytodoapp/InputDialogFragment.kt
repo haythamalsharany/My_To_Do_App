@@ -3,14 +3,12 @@ package com.alsharany.mytodoapp
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
-import android.provider.Settings.System.DATE_FORMAT
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.*
 
 private const val DIALOG_CrEATE_DATE = "DialogCreateDate"
